@@ -62,7 +62,7 @@ def run_static_experiments(investigation: Investigation) -> Investigation:
         if "language" in exp.objective.lower():
             langs = [o.payload.get("language") for o in investigation.observations
                      if o.observation_type == ObservationType.LANGUAGE_DETECTION]
-            results.append(f"Observed languages: {sorted(set(langs))}" if langs else "No language observations")
+            results.append(f"Observed languages: {sorted({x for x in langs if x is not None})}" if langs else "No language observations")
             if langs:
                 results.append("Re-parse consistent with original detection")
         elif "structural" in exp.objective.lower() or "symbol" in exp.objective.lower():
