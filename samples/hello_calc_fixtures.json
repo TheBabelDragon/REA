@@ -1,0 +1,10 @@
+{
+  "description": "Trusted pure-function fixtures for hello_calc.py. Evaluated by REA harness only — the artifact is never executed.",
+  "cases": [
+    {"function": "add", "args": [2, 3], "expected": 5.0},
+    {"function": "subtract", "args": [10, 4], "expected": 6.0},
+    {"function": "multiply", "args": [4, 5], "expected": 20.0},
+    {"function": "divide", "args": [10, 2], "expected": 5.0},
+    {"function": "power", "args": [2, 3], "expected": 8.0}
+  ]
+}
