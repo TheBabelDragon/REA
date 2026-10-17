@@ -92,10 +92,15 @@ def analyze_cmd(path: Path = typer.Argument(..., help="Path to artifact")) -> No
 def investigate_cmd(
     path: Path = typer.Argument(..., help="Path to artifact"),
     notes: Optional[str] = typer.Option(None, "--notes"),
+    fixtures: Optional[Path] = typer.Option(
+        None,
+        "--fixtures",
+        help="JSON file of trusted pure-function cases (artifact is never executed)",
+    ),
 ) -> None:
     """Execute the complete investigation pipeline."""
     try:
-        inv = run_full_pipeline(path, notes=notes)
+        inv = run_full_pipeline(path, notes=notes, fixtures_path=fixtures)
     except UnsupportedArtifactError as exc:
         _exit_error(str(exc), 3)
     except REAError as exc:
