@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "rea"
-version = "0.2.0"
+version = "0.2.1"
 description = "Reverse Engineer Anything — modular, evidence-driven reverse-engineering framework"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -58,3 +58,14 @@ addopts = "-v --tb=short"
 line-length = 100
 target-version = "py311"
 src = ["src", "tests"]
+
+[tool.ruff.lint]
+# CI focuses on correctness; style cleanups tracked separately.
+select = ["E", "F", "W"]
+ignore = [
+    "E501",  # line length — gradual fix
+    "E741",  # ambiguous variable names in legacy samples
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E402"]
