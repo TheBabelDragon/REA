@@ -11,10 +11,8 @@ from rea.core.models import (
     GraphNode,
     GraphNodeKind,
     Investigation,
-    Observation,
     ObservationType,
     RelationCertainty,
-    _new_id,
 )
 
 
