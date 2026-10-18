@@ -85,4 +85,4 @@ def test_report_missing_exit_4() -> None:
 def test_version() -> None:
     result = runner.invoke(app, ["version"])
     assert result.exit_code == 0
-    assert "0.2" in result.stdout
+    assert "0.3" in result.stdout
