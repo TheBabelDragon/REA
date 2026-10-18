@@ -15,7 +15,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from rea.core.graph_models import (
+# Re-export graph models for public API (used by Investigation and callers).
+from rea.core.graph_models import (  # noqa: F401
     EvidenceGraph,
     FileAnalysisStatus,
     GraphEdge,
@@ -312,15 +313,3 @@ class Investigation(BaseModel):
 
 def content_digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
-
-
-__all_graph__ = [
-    "EvidenceGraph",
-    "FileAnalysisStatus",
-    "GraphEdge",
-    "GraphEdgeKind",
-    "GraphNode",
-    "GraphNodeKind",
-    "ProjectFileRecord",
-    "RelationCertainty",
-]
