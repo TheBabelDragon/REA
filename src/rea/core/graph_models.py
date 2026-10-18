@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 SCHEMA_VERSION = "1.0.0"
 
@@ -18,15 +18,6 @@ def _utcnow() -> datetime:
 
 def _new_id(prefix: str) -> str:
     return f"{prefix}_{uuid.uuid4().hex[:12]}"
-
-
-class ArtifactKind(str, Enum):
-    SOURCE_CODE = "source_code"
-    TEXT = "text"
-    DIRECTORY = "directory"
-    BINARY = "binary"
-    ARCHIVE = "archive"
-    UNKNOWN = "unknown"
 
 
 class FileAnalysisStatus(str, Enum):
@@ -77,11 +68,20 @@ class ProjectFileRecord(BaseModel):
     content_digest: str | None = None
     size_bytes: int | None = None
     language: str | None = None
-    kind: ArtifactKind = ArtifactKind.UNKNOWN
+    kind: str = "unknown"
     status: FileAnalysisStatus = FileAnalysisStatus.PENDING
     error: str | None = None
     is_symlink: bool = False
     artifact_id: str | None = None
+
+    @field_validator("kind", mode="before")
+    @classmethod
+    def coerce_kind(cls, v: Any) -> str:
+        if v is None:
+            return "unknown"
+        if isinstance(v, Enum):
+            return str(v.value)
+        return str(v)
 
 
 class GraphNode(BaseModel):
