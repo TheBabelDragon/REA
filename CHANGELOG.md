@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.3.0] — 2026-10-18 (development)
+
+### Added
+- Bounded multi-file **project intake** with file-count, size, depth limits and exclusions
+- Symlink-escape rejection; changing-file detection; unsupported/oversized status records
+- `ProjectAnalysisAdapter` interface and **PythonProjectAdapter** (stdlib AST only)
+- Typed **evidence graph** (files, modules, symbols, edges with provenance and certainty)
+- Project path integrated into `create_investigation` / `run_full_pipeline` and CLI (`--project`)
+- Sample multi-module package: `samples/multi_pkg/`
+- Tests for intake safety, graph integrity, unresolved/dynamic imports, determinism, no-execution
+
+### Safety
+- Inspected project code is never imported or executed
+- No network by default; no dynamic sandbox in this milestone
+- Unresolved and dynamic references are explicit, not confirmed edges
+
+### Docs
+- Architecture, adapter guide, and threat model updated for project analysis
+
 ## [0.2.1] — 2026-10-17
 
 ### Added
