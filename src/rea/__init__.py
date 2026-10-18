@@ -1,14 +1,18 @@
 """REA — Reverse Engineer Anything."""
 
-__version__ = "0.2.1"
+__version__ = "0.3.0"
 __schema_version__ = "1.0.0"
 
 from rea.core.models import (
     Artifact,
     Evidence,
+    EvidenceGraph,
     Experiment,
+    GraphEdge,
+    GraphNode,
     Hypothesis,
     Observation,
+    ProjectFileRecord,
     SystemModel,
     ValidationReport,
 )
@@ -23,4 +27,8 @@ __all__ = [
     "Experiment",
     "SystemModel",
     "ValidationReport",
+    "EvidenceGraph",
+    "GraphNode",
+    "GraphEdge",
+    "ProjectFileRecord",
 ]
