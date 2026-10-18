@@ -4,7 +4,7 @@
 
 REA turns observable artifacts into structured, evidence-backed, testable reconstructions.
 
-> **v0.2:** Static analysis of source-code and text artifacts, evidence-linked hypotheses, trusted pure-function behavioral validation, atomic investigation persistence, and deterministic JSON export. **No automatic execution of inspected artifacts. No network by default.**
+> **v0.2.1:** Static analysis, evidence-linked hypotheses, trusted pure-function validation (built-in or user fixtures), atomic persistence, deterministic JSON export. **No automatic execution of inspected artifacts. No network by default.**
 
 ## Install
 
@@ -22,6 +22,7 @@ Requires Python 3.11+.
 rea inspect samples/hello_calc.py
 rea analyze samples/hello_calc.py
 rea investigate samples/hello_calc.py
+rea investigate samples/hello_calc.py --fixtures samples/hello_calc_fixtures.json
 rea report inv_<id>
 rea validate inv_<id>
 rea export inv_<id> --format json -o out.json
@@ -43,43 +44,49 @@ Artifact → Intake → Observations → Evidence → Hypotheses
          → Experiments → Reconstruction → Validation → Report
 ```
 
-### Implemented (v0.2)
+### Implemented (v0.2.1)
 
-- **Intake:** SHA-256 digest, size limits, safe path handling, actionable errors for missing/unreadable/oversized inputs.
-- **Observations:** Language, structure (AST for Python), dependencies, content summary, metadata — with provenance.
-- **Evidence:** Stable IDs, source observation links, relation types (supports / contradicts / derived_from).
-- **Hypotheses:** Explicit claims, supporting/contradicting evidence, assumptions, qualitative confidence ranks (not probabilities).
+- **Intake:** SHA-256 digest, size limits, safe path handling, actionable errors.
+- **Observations / Evidence / Hypotheses:** Provenance-linked, qualitative confidence.
 - **Reconstruction:** Components, interfaces, dependencies, unresolved areas.
-- **Validation:** Reference integrity + **trusted pure-function harness** (never executes the artifact). Includes deliberate pass and fail cases.
-- **Persistence:** Atomic JSON writes under `~/.rea/data/investigations/`, schema-versioned, loadable by report/validate/export.
+- **Validation:** Reference integrity + **trusted pure-function harness** (never executes the artifact).
+  - Default built-in arithmetic cases (includes a deliberate mismatch to show failure reporting).
+  - **User fixtures** via `--fixtures path.json` or `metadata.validation_fixtures` (clean pass path; no deliberate mismatch).
+- **Persistence:** Atomic JSON under `~/.rea/data/investigations/`.
 - **Export:** Deterministic JSON (`sort_keys=True`).
+
+### Fixture file format
+
+```json
+{
+  "cases": [
+    {"function": "add", "args": [2, 3], "expected": 5.0}
+  ]
+}
+```
+
+Only functions with a trusted harness entry are evaluated. The inspected artifact is never imported or executed.
 
 ### Planned (not implemented)
 
-- Dynamic / sandboxed execution (opt-in only)
+- Dynamic / sandboxed execution of the artifact (opt-in only)
 - Network observation
 - Multi-file project graph refinement
 - Calibrated confidence scores
 - Binary / archive deep analysis
 
-## Worked example (`samples/hello_calc.py`)
+## Worked example
 
 ```bash
+# Default path (includes deliberate mismatch → validate may exit 1)
 rea investigate samples/hello_calc.py
-# → Investigation inv_xxxxxxxxxxxx
-rea report inv_xxxxxxxxxxxx
-rea validate inv_xxxxxxxxxxxx
-rea export inv_xxxxxxxxxxxx --format json -o /tmp/hello_inv.json
+
+# Fixture path (trusted cases only → validate should exit 0)
+rea investigate samples/hello_calc.py --fixtures samples/hello_calc_fixtures.json
+rea report inv_<id>
+rea validate inv_<id>
+rea export inv_<id> --format json -o /tmp/hello_inv.json
 ```
-
-Expected outcomes:
-
-1. Artifact fingerprinted (kind=source_code, SHA-256, size).
-2. Observations: language=python, functions include `add`/`subtract`/…, class `Calculator`, imports `math`.
-3. Hypotheses linked to evidence (language high-confidence supported; pure-function semantics open/medium with explicit assumptions).
-4. Reconstruction lists module + functions + class; unresolved notes static-only limits.
-5. Validation: integrity checks pass; trusted-harness arithmetic cases for observed functions pass; deliberate mismatch fails; unsupported claims stay unverified.
-6. Export/readback preserves investigation identity and structure.
 
 ## Confidence semantics
 
@@ -90,15 +97,15 @@ Expected outcomes:
 | `low` | Weak or conflicting signals |
 | `unknown` | Insufficient evidence |
 
-Confidence is **qualitative**. REA never fabricates probabilities or claims empirical certainty without measurements.
+Confidence is **qualitative**. REA never fabricates probabilities.
 
 ## Safety
 
 - Inspected artifacts are **never** automatically executed.
 - Network disabled by default.
-- Fail closed on safety boundary violations (size limits, forbidden experiment classes, path traversal in store IDs).
-- Behavioral validation runs only a trusted independent harness, not the artifact under analysis.
-- Successful static analysis is **not** presented as proof of runtime equivalence.
+- Fail closed on safety boundary violations.
+- Behavioral validation uses only a trusted independent harness.
+- User fixtures are trusted inputs; they still do not cause artifact execution.
 
 See [docs/threat-model.md](docs/threat-model.md).
 
@@ -111,7 +118,7 @@ ruff check src tests
 mypy src --ignore-missing-imports
 ```
 
-CI runs on Python 3.11 and 3.12 (lint, type-check, tests).
+CI runs on Python 3.11 and 3.12.
 
 ## License
 
