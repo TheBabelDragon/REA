@@ -15,6 +15,16 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+from rea.core.graph_models import (
+    EvidenceGraph,
+    FileAnalysisStatus,
+    GraphEdge,
+    GraphEdgeKind,
+    GraphNode,
+    GraphNodeKind,
+    ProjectFileRecord,
+    RelationCertainty,
+)
 
 SCHEMA_VERSION = "1.0.0"
 
@@ -258,6 +268,8 @@ class Investigation(BaseModel):
     experiments: list[Experiment] = Field(default_factory=list)
     system_model: SystemModel | None = None
     validation_report: ValidationReport | None = None
+    evidence_graph: EvidenceGraph | None = None
+    project_files: list[ProjectFileRecord] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=_utcnow)
     updated_at: datetime = Field(default_factory=_utcnow)
     metadata: dict[str, Any] = Field(default_factory=dict)
@@ -300,3 +312,15 @@ class Investigation(BaseModel):
 
 def content_digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+__all_graph__ = [
+    "EvidenceGraph",
+    "FileAnalysisStatus",
+    "GraphEdge",
+    "GraphEdgeKind",
+    "GraphNode",
+    "GraphNodeKind",
+    "ProjectFileRecord",
+    "RelationCertainty",
+]
